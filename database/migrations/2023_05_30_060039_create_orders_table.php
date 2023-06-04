@@ -12,7 +12,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('orders', function (Blueprint $table) {
-            $table->id();
+            $table->id()->index();
+            $table->unsignedBigInteger('id_cliente');
+            $table->foreign('id_cliente')
+                    ->references('id')
+                    ->on('clients')
+                    ->onUpdate('cascade');
+            $table->enum('estado', ['pendiente', 'entregado']);
+            $table->decimal('valor_total', 7, 2);
+            $table->enum('modo_pago', ['transferencia', 'PCE']);
+            $table->unsignedBigInteger('id_direccion');
+            $table->foreign('id_direccion')
+                    ->references('id')
+                    ->on('addresses')
+                    ->onUpdate('cascade');
             $table->timestamps();
         });
     }
