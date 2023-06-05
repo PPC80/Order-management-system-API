@@ -11,17 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('products', function (Blueprint $table) {
+        Schema::create('images', function (Blueprint $table) {
             $table->id()->index();
-            $table->unsignedBigInteger('id_categoria');
-            $table->foreign('id_categoria')
+            $table->unsignedBigInteger('product_id');
+            $table->foreign('product_id')
                     ->references('id')
-                    ->on('categories')
+                    ->on('products')
                     ->onUpdate('cascade');
-            $table->string('nombre_producto');
-            $table->string('detalle')->nullable();
-            $table->smallInteger('stock_number')->unsigned();
-            $table->decimal('valor_venta', 7, 2);
+            $table->string('cloudinary_public_id')->nullable();
             $table->timestamps();
         });
     }
@@ -31,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('products');
+        Schema::dropIfExists('images');
     }
 };
