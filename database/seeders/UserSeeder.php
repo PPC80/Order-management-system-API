@@ -15,7 +15,10 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         $data = [
-            ['idRole' => 0, 'email' => 'pedro@gmail.com', 'password' => Hash::make(12345678)]
+            ['idRole' => 0, 'email' => 'pedro@gmail.com', 'password' => Hash::make(12345678)],
+            ['idRole' => 1, 'email' => 'pepe@gmail.com', 'password' => Hash::make(12345678)],
+            ['idRole' => 2, 'email' => 'carlos@gmail.com', 'password' => Hash::make(12345678)],
+            ['idRole' => 3, 'email' => 'jose@gmail.com', 'password' => Hash::make(12345678)]
         ];
 
         User::insert($data);

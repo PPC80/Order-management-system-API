@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('nombre_producto');
             $table->string('detalle')->nullable();
             $table->smallInteger('stock_number')->unsigned();
-            $table->decimal('valor_venta', 7, 2);
+            $table->decimal('valor_venta', 7, 2)->unsigned();
             $table->timestamps();
         });
     }

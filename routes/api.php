@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ProductsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,14 +23,22 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
 
+Route::post('products/store',[ProductsController::class,'store']);
+Route::get('products',[ProductsController::class,'index']);
+Route::get('products/search',[ProductsController::class,'search']);
+Route::put('products/update',[ProductsController::class,'update']);
+Route::delete('products/delete',[ProductsController::class,'destroy']);
+
 
 Route::middleware(['auth:sanctum'])->group(function ()
 {
     // Ruta para el cierre de sesión
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     Route::post('registerAdmin', [AuthController::class, 'registerAdmin'])->middleware('role:0');
     Route::post('registerEmployee', [AuthController::class, 'registerEmployee'])->middleware('role:1');
     Route::delete('deleteAccount/{id}',[AuthController::class,'delete']);
+
+
 
 
 

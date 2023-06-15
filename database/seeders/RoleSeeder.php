@@ -17,7 +17,7 @@ class RoleSeeder extends Seeder
             ['id' => '0', 'descripcion' => 'superadministrador'],
             ['id' => '1', 'descripcion' => 'administrador'],
             ['id' => '2', 'descripcion' => 'empleado'],
-            ['id' => '3', 'descripcion' => 'cliente'],
+            ['id' => '3', 'descripcion' => 'cliente']
         ];
 
         Role::insert($data);
