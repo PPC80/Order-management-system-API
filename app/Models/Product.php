@@ -10,6 +10,14 @@ class Product extends Model
 {
     use HasApiTokens, HasFactory;
 
+    protected $fillable = [
+        'id_categoria',
+        'nombre_producto',
+        'detalle',
+        'stock_number',
+        'valor_venta'
+    ];
+
     public function category()
     {
         return $this->belongsTo(Category::class);

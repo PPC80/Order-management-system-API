@@ -15,7 +15,11 @@ return new class extends Migration
             $table->id()->index();
             // $table->string('name');
             // $table->string('lastname');
-            $table->decimal('idRole', $precision = 1, $scale = 0)->default(3);
+            $table->unsignedBigInteger('idRole');
+            $table->foreign('idRole')
+                    ->references('id')
+                    ->on('roles')
+                    ->onUpdate('cascade');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
