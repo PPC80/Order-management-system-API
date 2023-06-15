@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Client;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 
 class AuthController extends Controller
@@ -68,6 +69,7 @@ class AuthController extends Controller
         }
 
         $user = User::create([
+            'idRole' => 3,
             'email' => $request->input('email'),
             'password' => bcrypt($request->input('password')),
         ]);
@@ -87,6 +89,7 @@ class AuthController extends Controller
         ], 201);
     }
 
+
     public function registerAdmin(Request $request){
         $validator = Validator::make($request->all(), [
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
@@ -104,11 +107,58 @@ class AuthController extends Controller
             'password' => bcrypt($request->input('password')),
         ]);
 
-        $token = $user->createToken('API Token')->plainTextToken;
+        return response()->json([
+            'user' => $user,
+            'message' => 'Admin account created',
+        ], 201);
+    }
+
+
+    public function registerEmployee(Request $request){
+        $validator = Validator::make($request->all(), [
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            //password_confirmation
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $user = User::create([
+            'idRole' => 2,
+            'email' => $request->input('email'),
+            'password' => bcrypt($request->input('password')),
+        ]);
 
         return response()->json([
             'user' => $user,
-            'token' => $token,
+            'message' => 'Employee account created',
         ], 201);
+    }
+
+
+    public function delete($id){
+        $user = User::find($id);
+
+        $idRole = Auth::user()->idRole;
+
+        if($idRole == 0 || $idRole == 1){
+            if($user == null){
+                return response()->json(['response' => 'User does not exist']);
+            } else if($user->idRole == 0){
+                return response()->json(['response' => 'Cannot delete that user']);
+            } else if($user->idRole == 1 && $idRole == 1){
+                return response()->json(['response' => 'Admins cannot delete their own accounts']);
+            } else {
+                //Cambia el valor de id_user a null antes de borrar al user para que no haya problemas de constraints
+                DB::table('clients')->where('id_user', $id)->update(['id_user' => null]);
+                $user->tokens()->delete();
+                $user ->delete();
+                return response()->json(['response' => 'User deleted']);
+            }
+        } else {
+            return response()->json(['response' => 'Unauthorized Role']);
+        }
     }
 }

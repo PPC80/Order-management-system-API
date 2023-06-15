@@ -28,6 +28,9 @@ Route::middleware(['auth:sanctum'])->group(function ()
     // Ruta para el cierre de sesión
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::post('registerAdmin', [AuthController::class, 'registerAdmin'])->middleware('role:0');
+    Route::post('registerEmployee', [AuthController::class, 'registerEmployee'])->middleware('role:1');
+    Route::delete('deleteAccount/{id}',[AuthController::class,'delete']);
+
 
 
 
