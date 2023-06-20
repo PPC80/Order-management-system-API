@@ -11,21 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('orders', function (Blueprint $table) {
+        Schema::create('cart_details', function (Blueprint $table) {
             $table->id()->index();
-            $table->unsignedBigInteger('id_cliente');
-            $table->foreign('id_cliente')
+            $table->unsignedBigInteger('id_cart');
+            $table->foreign('id_cart')
                     ->references('id')
-                    ->on('clients')
+                    ->on('carts')
                     ->onUpdate('cascade');
-            $table->enum('estado', ['pendiente', 'entregado']);
-            $table->decimal('valor_total', 7, 2)->unsigned();
-            $table->enum('modo_pago', ['transferencia', 'PCE']);
-            $table->unsignedBigInteger('id_direccion');
-            $table->foreign('id_direccion')
+            $table->unsignedBigInteger('id_producto');
+            $table->foreign('id_producto')
                     ->references('id')
-                    ->on('addresses')
+                    ->on('products')
                     ->onUpdate('cascade');
+            $table->smallInteger('cantidad')->unsigned();
+            $table->decimal('suma_precio', 7, 2)->unsigned();
             $table->timestamps();
         });
     }
@@ -35,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('orders');
+        Schema::dropIfExists('cart_details');
     }
 };

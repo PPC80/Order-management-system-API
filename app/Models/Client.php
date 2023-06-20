@@ -13,7 +13,8 @@ class Client extends Model
     protected $fillable = [
         'id_user',
         'nombres',
-        'apellidos'
+        'apellidos',
+        'telefono'
     ];
 
     public function orders()
@@ -24,5 +25,10 @@ class Client extends Model
     public function addresses()
     {
         return $this->hasMany(Address::class);
+    }
+
+    public function cart()
+    {
+        return $this->hasOne(Cart::class);
     }
 }

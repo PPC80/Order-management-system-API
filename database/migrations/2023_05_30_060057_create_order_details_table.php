@@ -24,7 +24,7 @@ return new class extends Migration
                     ->on('products')
                     ->onUpdate('cascade');
             $table->smallInteger('cantidad')->unsigned();
-            $table->decimal('suma_precio', 7, 2);
+            $table->decimal('suma_precio', 7, 2)->unsigned();
             $table->timestamps();
         });
     }
