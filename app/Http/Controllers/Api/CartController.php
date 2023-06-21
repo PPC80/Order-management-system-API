@@ -47,7 +47,7 @@ class CartController extends Controller
                 $cart->delete();
             }
 
-            return response()->json(['message' => "Cart deleted successfully"]);
+            return response()->json(['message' => "Cart deleted successfully"], 204);
 
         } catch (\Exception $e){
             Log::error("Error deleting cart: " . $e->getMessage());

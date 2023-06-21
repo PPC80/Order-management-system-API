@@ -32,7 +32,7 @@ class CartDetailController extends Controller
                 return response()->json(['message' => 'Cart is empty']);
             }
 
-            return response()->json($results, 201);
+            return response()->json($results, 200);
 
         } catch (\Exception $e){
             Log::error("Error loading cart products: " . $e->getMessage());
@@ -131,7 +131,7 @@ class CartDetailController extends Controller
 
                     $product->increment('stock_number', $quantity);
 
-                    return response()->json(['message' => "Product removed from cart successfully"], 201);
+                    return response()->json(['message' => "Product removed from cart successfully"], 204);
                 } else {
                     return response()->json(['message' => 'Product not found in cart'], 404);
                 }

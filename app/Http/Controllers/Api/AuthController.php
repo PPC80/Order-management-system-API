@@ -60,7 +60,7 @@ class AuthController extends Controller
         try{
             $user = $request->user();
             $user->tokens()->delete();
-            return response()->json(['message' => 'Logged out successfully']);
+            return response()->json(['message' => 'Logged out successfully'], 200);
         } catch (\Exception $e){
             Log::error("Error logging out: " . $e->getMessage());
             return response()->json(['error' => 'Failed to log out'], 500);
@@ -71,8 +71,8 @@ class AuthController extends Controller
     public function register(Request $request){
 
         $validator = Validator::make($request->all(), [
-            'nombres' => ['required', 'string', 'max:255'],
-            'apellidos' => ['required', 'string', 'max:255'],
+            'nombres' => ['required', 'string', 'max:255', 'alpha:ascii'],
+            'apellidos' => ['required', 'string', 'max:255', 'alpha:ascii'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'telefono' => ['string', 'regex:/^09\d{8}$/', 'size:10'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
@@ -189,10 +189,10 @@ class AuthController extends Controller
                     DB::table('clients')->where('id_user', $id)->update(['id_user' => null]);
                     $user->tokens()->delete();
                     $user ->delete();
-                    return response()->json(['response' => 'User deleted']);
+                    return response()->json(['response' => 'User deleted'], 204);
                 }
             } else {
-                return response()->json(['response' => 'Unauthorized Role']);
+                return response()->json(['response' => 'Unauthorized Role'], 403);
             }
         } catch (\Exception $e){
             Log::error("Error deleting account: " . $e->getMessage());
