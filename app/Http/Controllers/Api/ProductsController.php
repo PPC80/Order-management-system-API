@@ -10,13 +10,16 @@ use Illuminate\Support\Facades\Log;
 
 class ProductsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(){
 
         try{
-            return Product::all();
+            $products = Product::all();
+
+            if ($products->isEmpty()) {
+                return response()->json(['message' => 'No products available']);
+            }
+
+            return $products;
 
         } catch (\Exception $e){
             Log::error("Error loading products: " . $e->getMessage());
@@ -24,9 +27,8 @@ class ProductsController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
+
     public function store(Request $request){
 
         $request->validate([
@@ -54,9 +56,8 @@ class ProductsController extends Controller
         }
     }
 
-    /**
-     * Search resources.
-     */
+
+
     public function search(Request $request){
 
         $keyword = $request->input('keyword');
@@ -79,13 +80,12 @@ class ProductsController extends Controller
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+
+
     public function update(Request $request){
 
         $request->validate([
-            'id' => 'required|integer|numeric|gte:0',
+            'id' => 'required|integer|numeric|gte:1',
             'id_categoria' => 'required|integer|numeric|between:1,3',
             'nombre_producto' => 'required|string',
             'detalle' => 'string',
@@ -96,15 +96,18 @@ class ProductsController extends Controller
         try{
             $product = Product::find($request->input('id'));
 
-            $product->update([
-                'id_categoria' => $request->input('id_categoria'),
-                'nombre_producto' => $request->input('nombre_producto'),
-                'detalle' => $request->input('detalle'),
-                'stock_number' => $request->input('stock_number'),
-                'valor_venta' => $request->input('valor_venta')
-            ]);
-
-            return response()->json(['message' => "Product updated successfully"]);
+            if ($product) {
+                $product->update([
+                    'id_categoria' => $request->input('id_categoria'),
+                    'nombre_producto' => $request->input('nombre_producto'),
+                    'detalle' => $request->input('detalle'),
+                    'stock_number' => $request->input('stock_number'),
+                    'valor_venta' => $request->input('valor_venta')
+                ]);
+                return response()->json(['message' => "Product updated successfully"]);
+            } else {
+                return response()->json(['message' => 'Product not found'], 404);
+            }
 
         } catch (\Exception $e){
             Log::error("Error updating product: " . $e->getMessage());
@@ -112,19 +115,23 @@ class ProductsController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
+
     public function destroy(Request $request){
 
         $request->validate([
-            'id' => 'required|integer|numeric|gte:0'
+            'id' => 'required|integer|numeric|gte:1'
         ]);
 
         try{
             $product = Product::find($request->input('id'));
-            $product->delete();
-            return response()->json(['message' => "Product deleted successfully"]);
+
+            if ($product) {
+                $product->delete();
+                return response()->json(['message' => 'Product deleted successfully']);
+            } else {
+                return response()->json(['message' => 'Product not found'], 404);
+            }
 
         } catch (\Exception $e){
             Log::error("Error deleting product: " . $e->getMessage());

@@ -74,6 +74,7 @@ class AuthController extends Controller
             'nombres' => ['required', 'string', 'max:255'],
             'apellidos' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'telefono' => ['string', 'regex:/^09\d{8}$/', 'size:10'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             //password_confirmation
         ]);
@@ -93,6 +94,7 @@ class AuthController extends Controller
                 'id_user' => $user->id,
                 'nombres' => $request->input('nombres'),
                 'apellidos' => $request->input('apellidos'),
+                'telefono' => $request->input('telefono')
             ]);
 
             $token = $user->createToken('API Token')->plainTextToken;
