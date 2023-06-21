@@ -11,9 +11,6 @@ use App\Models\CartDetail;
 
 class CartDetailController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request){
 
         try{
@@ -43,9 +40,8 @@ class CartDetailController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
+
     public function add(Request $request){
 
         $request->validate([
@@ -102,30 +98,51 @@ class CartDetailController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function addExtra($product, $cantidad, $total){
+    public function remove(Request $request){
 
-        // $product->update([
-        //     'cantidad' => (($product->cantidad) + $cantidad),
-        //     'suma_precio' => (($product->suma_precio) + $total)
-        // ]);
-    }
+        $request->validate([
+            'id_cart' => 'required|integer|numeric|gte:1',
+            'id_producto' => 'required|integer|numeric|gte:1',
+            'cantidad' => 'required|integer|numeric|gte:1'
+        ]);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        try{
+            $product = Product::find($request->input('id_producto'));
+
+            if($product){
+
+                $quantity = $request->input('cantidad');
+
+                $price = $product->valor_venta;
+                $total = $quantity * $price;
+
+                $productExists = CartDetail::where('id_cart', $request->input('id_cart'))
+                   ->where('id_producto', $request->input('id_producto'))
+                   ->first();
+
+                if($productExists){
+                    $productExists->decrement('cantidad', $quantity);
+                    $productExists->decrement('suma_precio', $total);
+
+                    if ($productExists->cantidad <= 0) {
+                        $productExists->delete();
+                    }
+
+                    $product->increment('stock_number', $quantity);
+
+                    return response()->json(['message' => "Product removed from cart successfully"], 201);
+                } else {
+                    return response()->json(['message' => 'Product not found in cart'], 404);
+                }
+
+            } else {
+                return response()->json(['message' => 'Product not found'], 404);
+            }
+
+        } catch (\Exception $e){
+            Log::error("Error adding product to cart: " . $e->getMessage());
+            return response()->json(['error' => 'Failed to remove product from cart'], 500);
+        }
     }
 }

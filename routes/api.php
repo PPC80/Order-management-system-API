@@ -43,7 +43,7 @@ Route::get('cart',[CartDetailController::class,'index']);
 Route::post('cart/add',[CartDetailController::class,'add']);
 Route::get('cart/search',[CartDetailController::class,'search']);
 Route::put('cart/update',[CartDetailController::class,'update']);
-Route::delete('cart/delete',[CartDetailController::class,'destroy']);
+Route::delete('cart/remove',[CartDetailController::class,'remove']);
 
 
 Route::post('upload', [ImageController::class, 'store']);

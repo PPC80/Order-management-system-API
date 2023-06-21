@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Cart;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 
@@ -36,8 +37,16 @@ class CartController extends Controller
         ]);
 
         try{
+            $cart_details = DB::table('cart_details')
+                ->where('id_cart', $request->input('id'))
+                ->delete();
+
             $cart = Cart::find($request->input('id'));
-            $cart->delete();
+
+            if ($cart) {
+                $cart->delete();
+            }
+
             return response()->json(['message' => "Cart deleted successfully"]);
 
         } catch (\Exception $e){
