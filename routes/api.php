@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CartDetailController;
 use App\Http\Controllers\Api\ImageController;
 use App\Http\Controllers\Api\ProductsController;
+use App\Http\Controllers\Api\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,6 +47,8 @@ Route::put('cart/update',[CartDetailController::class,'update']);
 Route::delete('cart/remove',[CartDetailController::class,'remove']);
 
 
+
+
 Route::post('upload', [ImageController::class, 'store']);
 
 
@@ -57,5 +60,9 @@ Route::middleware(['auth:sanctum'])->group(function ()
     //Register Admin/Employee - Delete Account
     Route::post('registerAdmin', [AuthController::class, 'registerAdmin'])->middleware('role:0');
     Route::post('registerEmployee', [AuthController::class, 'registerEmployee'])->middleware('role:1');
-    Route::delete('deleteAccount/{id}',[AuthController::class,'delete']);
+    Route::delete('deleteAccount',[AuthController::class,'delete']);
+
+    //Profile
+    Route::get('profile',[ProfileController::class,'show']);
+    Route::post('profile/update',[ProfileController::class,'update']);
 });

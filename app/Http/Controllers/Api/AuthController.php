@@ -171,28 +171,33 @@ class AuthController extends Controller
     }
 
 
-    public function delete($id){
+    public function delete(Request $request){
 
         try{
-            $user = User::find($id);
+            $request->validate([
+                'id_user' => 'required|integer|numeric|gte:1'
+            ]);
+
+            $user = User::find($request->input('id_user'));
             $idRole = Auth::user()->idRole;
+            return response()->json(['message' => $idRole]);
 
             if($idRole == 0 || $idRole == 1){
                 if($user == null){
-                    return response()->json(['response' => 'User does not exist']);
+                    return response()->json(['message' => 'User does not exist']);
                 } else if($user->idRole == 0){
                     return response()->json(['response' => 'Cannot delete that user']);
                 } else if($user->idRole == 1 && $idRole == 1){
-                    return response()->json(['response' => 'Admins cannot delete their own accounts']);
+                    return response()->json(['message' => 'Admins cannot delete their own accounts']);
                 } else {
                     //Cambia el valor de id_user a null antes de borrar al user para que no haya problemas de constraints
-                    DB::table('clients')->where('id_user', $id)->update(['id_user' => null]);
+                    DB::table('clients')->where('id_user', $request->input('id_user'))->update(['id_user' => null]);
                     $user->tokens()->delete();
                     $user ->delete();
-                    return response()->json(['response' => 'User deleted'], 204);
+                    return response()->json(['message' => 'User deleted'], 204);
                 }
             } else {
-                return response()->json(['response' => 'Unauthorized Role'], 403);
+                return response()->json(['message' => 'Unauthorized Role'], 403);
             }
         } catch (\Exception $e){
             Log::error("Error deleting account: " . $e->getMessage());
