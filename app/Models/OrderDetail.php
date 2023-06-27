@@ -10,6 +10,13 @@ class OrderDetail extends Model
 {
     use HasApiTokens, HasFactory;
 
+    protected $fillable = [
+        'id_pedido',
+        'id_producto',
+        'cantidad',
+        'suma_precio'
+    ];
+
     public function product()
     {
         return $this->belongsTo(Product::class);

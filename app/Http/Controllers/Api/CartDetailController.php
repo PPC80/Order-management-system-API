@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Product;
+use App\Models\CartDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Models\CartDetail;
+use App\Models\Cart;
 
 class CartDetailController extends Controller
 {
@@ -70,11 +71,14 @@ class CartDetailController extends Controller
                    ->where('id_producto', $request->input('id_producto'))
                    ->first();
 
+                $cart = Cart::where('id', $request->input('id_cart'))->first();
+
                 if($productExists){
                     $productExists->increment('cantidad', $quantity);
                     $productExists->increment('suma_precio', $total);
 
                     $product->decrement('stock_number', $quantity);
+
                 } else {
                     CartDetail::create([
                         'id_cart' => $request->input('id_cart'),
@@ -84,6 +88,14 @@ class CartDetailController extends Controller
                     ]);
 
                     $product->decrement('stock_number', $quantity);
+                }
+
+                if($cart->valor_total == null){
+                    $cart->update([
+                        'valor_total' => $total
+                    ]);
+                } else {
+                    $cart->increment('valor_total', $total);
                 }
 
                 return response()->json(['message' => "Product added to cart successfully"], 201);
@@ -121,9 +133,25 @@ class CartDetailController extends Controller
                    ->where('id_producto', $request->input('id_producto'))
                    ->first();
 
+                $cart = Cart::where('id', $request->input('id_cart'))->first();
+
                 if($productExists){
                     $productExists->decrement('cantidad', $quantity);
                     $productExists->decrement('suma_precio', $total);
+
+                    //Si el valor total del carrito es null, solo se actualiza con el nuevo valor
+                    if($cart->valor_total == null){
+                        $cart->update([
+                            'valor_total' => $total
+                        ]);
+                    //Si al restar el total, el valor total se hace 0 o menos de 0, no resta, solo actualiza
+                    } else if ($cart->valor_total - $total <= 0){
+                        $cart->update([
+                            'valor_total' => 0.00
+                        ]);
+                    } else {
+                        $cart->decrement('valor_total', $total);
+                    }
 
                     if ($productExists->cantidad <= 0) {
                         $productExists->delete();

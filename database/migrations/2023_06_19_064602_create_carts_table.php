@@ -18,6 +18,7 @@ return new class extends Migration
                     ->references('id')
                     ->on('users')
                     ->onUpdate('cascade');
+            $table->decimal('valor_total', 7, 2)->unsigned()->nullable();
             $table->timestamps();
         });
     }

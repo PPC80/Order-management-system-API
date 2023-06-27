@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CartDetailController;
 use App\Http\Controllers\Api\ImageController;
+use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductsController;
 use App\Http\Controllers\Api\ProfileController;
 
@@ -37,7 +38,7 @@ Route::delete('products/delete',[ProductsController::class,'destroy']);
 
 //Carts
 Route::post('cart/create',[CartController::class,'create']);
-Route::delete('cart/delete',[CartController::class,'destroy']);
+Route::delete('cart/delete',[CartController::class,'destroy'])->name('api.cart.delete');
 
 //Cart Details
 Route::get('cart',[CartDetailController::class,'index']);
@@ -65,4 +66,7 @@ Route::middleware(['auth:sanctum'])->group(function ()
     //Profile
     Route::get('profile',[ProfileController::class,'show']);
     Route::post('profile/update',[ProfileController::class,'update']);
+
+    //Orders
+    Route::post('order/create',[OrderController::class,'create']);
 });

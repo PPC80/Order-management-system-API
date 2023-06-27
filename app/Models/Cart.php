@@ -10,7 +10,8 @@ class Cart extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id_user'
+        'id_user',
+        'valor_total'
     ];
 
     public function client()
