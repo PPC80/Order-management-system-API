@@ -16,10 +16,10 @@ class ProductsController extends Controller
             $products = Product::all();
 
             if ($products->isEmpty()) {
-                return response()->json(['message' => 'No products available']);
+                return response()->json(['message' => 'No products available'], 404);
             }
 
-            return $products;
+            return response()->json($products, 200);
 
         } catch (\Exception $e){
             Log::error("Error loading products: " . $e->getMessage());
@@ -57,9 +57,36 @@ class ProductsController extends Controller
     }
 
 
+    public function show(Request $request){
+
+        $request->validate([
+            'id' => 'required|integer|numeric|gte:1'
+        ]);
+
+        try{
+            $product = DB::table('products')
+                ->where('id', $request->input('id'))
+                ->first();
+
+            if($product){
+                return response()->json($product, 200);
+            } else {
+                return response()->json(['message' => "Cannot find product"], 404);
+            }
+
+        } catch (\Exception $e){
+            Log::error("Error searching product: " . $e->getMessage());
+            return response()->json(['error' => 'Failed to search product'], 500);
+        }
+    }
+
 
     public function search(Request $request){
 
+        $request->validate([
+            'keyword' => 'required'
+        ]);
+        
         $keyword = $request->input('keyword');
 
         try{
@@ -69,10 +96,10 @@ class ProductsController extends Controller
                 ->get();
 
             if($products->isEmpty() || $products == "" || $products == null){
-            return response()->json(['message' => "Cannot find product"]);
+            return response()->json(['message' => "Cannot find product"], 404);
             }
 
-            return response()->json($products);
+            return response()->json($products, 200);
 
         } catch (\Exception $e){
             Log::error("Error searching product: " . $e->getMessage());
@@ -104,7 +131,7 @@ class ProductsController extends Controller
                     'stock_number' => $request->input('stock_number'),
                     'valor_venta' => $request->input('valor_venta')
                 ]);
-                return response()->json(['message' => "Product updated successfully"]);
+                return response()->json(['message' => "Product updated successfully"], 202);
             } else {
                 return response()->json(['message' => 'Product not found'], 404);
             }
@@ -128,7 +155,7 @@ class ProductsController extends Controller
 
             if ($product) {
                 $product->delete();
-                return response()->json(['message' => 'Product deleted successfully']);
+                return response()->json(['message' => 'Product deleted successfully'], 204);
             } else {
                 return response()->json(['message' => 'Product not found'], 404);
             }

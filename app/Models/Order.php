@@ -10,6 +10,14 @@ class Order extends Model
 {
     use HasApiTokens, HasFactory;
 
+    protected $fillable = [
+        'id_cliente',
+        'estado',
+        'valor_total',
+        'modo_pago',
+        'id_direccion'
+    ];
+
     public function orderDetails()
     {
         return $this->hasMany(OrderDetail::class);

@@ -19,7 +19,7 @@ return new class extends Migration
                     ->on('clients')
                     ->onUpdate('cascade');
             $table->enum('estado', ['pendiente', 'entregado']);
-            $table->decimal('valor_total', 7, 2)->unsigned();
+            $table->decimal('valor_total', 7, 2)->unsigned()->nullable();
             $table->enum('modo_pago', ['transferencia', 'PCE']);
             $table->unsignedBigInteger('id_direccion');
             $table->foreign('id_direccion')

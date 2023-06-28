@@ -10,6 +10,11 @@ class Address extends Model
 {
     use HasApiTokens, HasFactory;
 
+    protected $fillable = [
+        'id_cliente',
+        'direccion'
+    ];
+
     public function client()
     {
         return $this->belongsTo(Client::class);

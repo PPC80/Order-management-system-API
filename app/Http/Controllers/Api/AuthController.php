@@ -43,6 +43,7 @@ class AuthController extends Controller
                         'message' => 'Successfully logged in',
                         'access_token' => $token,
                         'token_type' => 'Bearer',
+                        'user_role' => $user->idRole
                     ]);
                 } else {
                     return response()->json(['error' => 'Invalid email or password'], 401);
@@ -60,7 +61,7 @@ class AuthController extends Controller
         try{
             $user = $request->user();
             $user->tokens()->delete();
-            return response()->json(['message' => 'Logged out successfully']);
+            return response()->json(['message' => 'Logged out successfully'], 200);
         } catch (\Exception $e){
             Log::error("Error logging out: " . $e->getMessage());
             return response()->json(['error' => 'Failed to log out'], 500);
@@ -71,8 +72,8 @@ class AuthController extends Controller
     public function register(Request $request){
 
         $validator = Validator::make($request->all(), [
-            'nombres' => ['required', 'string', 'max:255'],
-            'apellidos' => ['required', 'string', 'max:255'],
+            'nombres' => ['required', 'string', 'max:255', 'alpha:ascii'],
+            'apellidos' => ['required', 'string', 'max:255', 'alpha:ascii'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'telefono' => ['string', 'regex:/^09\d{8}$/', 'size:10'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
@@ -171,28 +172,33 @@ class AuthController extends Controller
     }
 
 
-    public function delete($id){
+    public function delete(Request $request){
 
         try{
-            $user = User::find($id);
+            $request->validate([
+                'id_user' => 'required|integer|numeric|gte:1'
+            ]);
+
+            $user = User::find($request->input('id_user'));
             $idRole = Auth::user()->idRole;
+            return response()->json(['message' => $idRole]);
 
             if($idRole == 0 || $idRole == 1){
                 if($user == null){
-                    return response()->json(['response' => 'User does not exist']);
+                    return response()->json(['message' => 'User does not exist']);
                 } else if($user->idRole == 0){
                     return response()->json(['response' => 'Cannot delete that user']);
                 } else if($user->idRole == 1 && $idRole == 1){
-                    return response()->json(['response' => 'Admins cannot delete their own accounts']);
+                    return response()->json(['message' => 'Admins cannot delete their own accounts']);
                 } else {
                     //Cambia el valor de id_user a null antes de borrar al user para que no haya problemas de constraints
-                    DB::table('clients')->where('id_user', $id)->update(['id_user' => null]);
+                    DB::table('clients')->where('id_user', $request->input('id_user'))->update(['id_user' => null]);
                     $user->tokens()->delete();
                     $user ->delete();
-                    return response()->json(['response' => 'User deleted']);
+                    return response()->json(['message' => 'User deleted'], 204);
                 }
             } else {
-                return response()->json(['response' => 'Unauthorized Role']);
+                return response()->json(['message' => 'Unauthorized Role'], 403);
             }
         } catch (\Exception $e){
             Log::error("Error deleting account: " . $e->getMessage());
