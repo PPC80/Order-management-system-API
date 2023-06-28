@@ -57,9 +57,36 @@ class ProductsController extends Controller
     }
 
 
+    public function show(Request $request){
+
+        $request->validate([
+            'id' => 'required|integer|numeric|gte:1'
+        ]);
+
+        try{
+            $product = DB::table('products')
+                ->where('id', $request->input('id'))
+                ->first();
+
+            if($product){
+                return response()->json($product, 200);
+            } else {
+                return response()->json(['message' => "Cannot find product"], 404);
+            }
+
+        } catch (\Exception $e){
+            Log::error("Error searching product: " . $e->getMessage());
+            return response()->json(['error' => 'Failed to search product'], 500);
+        }
+    }
+
 
     public function search(Request $request){
 
+        $request->validate([
+            'keyword' => 'required'
+        ]);
+        
         $keyword = $request->input('keyword');
 
         try{

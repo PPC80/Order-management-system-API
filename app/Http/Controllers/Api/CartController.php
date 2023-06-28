@@ -15,9 +15,15 @@ class CartController extends Controller
         $id = Auth::id();
 
         try{
-            $cart = Cart::create([
-                'id_user' => $id
-            ]);
+            $cartExists = Cart::where('id_user', $id);
+
+            if($cartExists){
+                return response()->json(['message' => "Only one cart per account can be active at a time"], 409);
+            } else {
+                $cart = Cart::create([
+                    'id_user' => $id
+                ]);
+            }
 
             return response()->json(['message' => "Cart saved successfully", 'cart id' => $cart->id], 201);
 
@@ -33,14 +39,20 @@ class CartController extends Controller
         $id = Auth::id();
 
         try{
-            $cart_details = DB::table('cart_details')
-                ->where('id_cart', $id)
-                ->delete();
-
-            $cart = Cart::find($id);
+            $cart = DB::table('carts')
+                ->where('id_user', $id)
+                ->first();
 
             if ($cart) {
-                $cart->delete();
+                DB::table('cart_details')
+                    ->where('id_cart', $cart->id)
+                    ->delete();
+
+                DB::table('carts')
+                    ->where('id', $cart->id)
+                    ->delete();
+            } else {
+                return response()->json(['message' => "Cart does not exist"], 404);
             }
 
             return response()->json(['message' => "Cart deleted successfully"]);
