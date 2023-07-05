@@ -18,7 +18,8 @@ return new class extends Migration
                     ->references('id')
                     ->on('products')
                     ->onUpdate('cascade');
-            $table->string('cloudinary_public_id')->nullable();
+            $table->string('cloudinary_public_id');
+            $table->string('cloudinary_url');
             $table->timestamps();
         });
     }

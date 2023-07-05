@@ -10,6 +10,12 @@ class Image extends Model
 {
     use HasApiTokens, HasFactory;
 
+    protected $fillable = [
+        'product_id',
+        'cloudinary_public_id',
+        'cloudinary_url'
+    ];
+
     public function product()
     {
         return $this->belongsTo(Product::class);

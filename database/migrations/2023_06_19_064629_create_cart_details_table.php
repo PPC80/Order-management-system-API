@@ -22,7 +22,8 @@ return new class extends Migration
             $table->foreign('id_producto')
                     ->references('id')
                     ->on('products')
-                    ->onUpdate('cascade');
+                    ->onUpdate('cascade')
+                    ->onDelete('cascade');
             $table->smallInteger('cantidad')->unsigned();
             $table->decimal('suma_precio', 7, 2)->unsigned();
             $table->timestamps();
