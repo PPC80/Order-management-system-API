@@ -29,6 +29,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
 
+//Products
+Route::get('products',[ProductsController::class,'index']);
+Route::get('products/search',[ProductsController::class,'search']);
+
 Route::middleware(['auth:sanctum'])->group(function ()
 {
     //Logout
@@ -40,10 +44,8 @@ Route::middleware(['auth:sanctum'])->group(function ()
     Route::delete('deleteAccount',[AuthController::class,'delete']);
 
     //Products
-    Route::get('products',[ProductsController::class,'index']);
     Route::get('products/find',[ProductsController::class,'show']);
     Route::post('products/store',[ProductsController::class,'store']);
-    Route::get('products/search',[ProductsController::class,'search']);
     Route::put('products/update',[ProductsController::class,'update']);
     Route::delete('products/delete',[ProductsController::class,'destroy']);
 

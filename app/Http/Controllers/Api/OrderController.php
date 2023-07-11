@@ -123,7 +123,9 @@ class OrderController extends Controller
     }
 
 
-
+    /**
+     * Esta funcion sirve para buscar pedidos usando nombres, apellidos, direcciones o modos de pago
+     */
     public function search(Request $request){
 
         $request->validate([
