@@ -79,8 +79,9 @@
 
                 <div class="links">
                     <form action="/uploadimage" method="POST" enctype="multipart/form-data">
+                        @csrf
                         <div class="row">
-                            @csrf
+
                             <div class="col-md-6">
                                 <input type="file" name="file" class="form-control">
                             </div>

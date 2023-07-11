@@ -29,9 +29,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
 
-Route::post('upload', [ImageController::class, 'store']);
-
-
 Route::middleware(['auth:sanctum'])->group(function ()
 {
     //Logout
@@ -71,4 +68,9 @@ Route::middleware(['auth:sanctum'])->group(function ()
     Route::get('orders/client/list',[OrderController::class,'showClientOrders']);
     Route::get('orders/search',[OrderController::class,'search']);
     Route::put('orders/state/update',[OrderController::class,'updateState']);
+
+    //Images
+    Route::get('image/show', [ImageController::class, 'show']);
+    Route::post('image/upload', [ImageController::class, 'store']);
+    Route::delete('image/delete', [ImageController::class, 'destroy']);
 });

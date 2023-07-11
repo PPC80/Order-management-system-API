@@ -86,7 +86,7 @@ class ProductsController extends Controller
         $request->validate([
             'keyword' => 'required'
         ]);
-        
+
         $keyword = $request->input('keyword');
 
         try{
@@ -154,6 +154,10 @@ class ProductsController extends Controller
             $product = Product::find($request->input('id'));
 
             if ($product) {
+                 //Se llama al metodo para destruir las imagenes antes de borrar el producto
+                $imageController = app(ImageController::class);
+                $imageController->destroyAll($product->id);
+
                 $product->delete();
                 return response()->json(['message' => 'Product deleted successfully'], 204);
             } else {

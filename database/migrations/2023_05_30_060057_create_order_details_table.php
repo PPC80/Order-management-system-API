@@ -18,11 +18,12 @@ return new class extends Migration
                     ->references('id')
                     ->on('orders')
                     ->onUpdate('cascade');
-            $table->unsignedBigInteger('id_producto');
+            $table->unsignedBigInteger('id_producto')->nullable();
             $table->foreign('id_producto')
                     ->references('id')
                     ->on('products')
-                    ->onUpdate('cascade');
+                    ->onUpdate('cascade')
+                    ->onDelete('set null');
             $table->smallInteger('cantidad')->unsigned();
             $table->decimal('suma_precio', 7, 2)->unsigned();
             $table->timestamps();

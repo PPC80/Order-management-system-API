@@ -43,7 +43,8 @@ class AuthController extends Controller
                         'message' => 'Successfully logged in',
                         'access_token' => $token,
                         'token_type' => 'Bearer',
-                        'user_role' => $user->idRole
+                        'user_role' => $user->idRole,
+                        'user_id' => $user->id
                     ]);
                 } else {
                     return response()->json(['error' => 'Invalid email or password'], 401);

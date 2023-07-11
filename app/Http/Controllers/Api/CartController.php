@@ -15,7 +15,7 @@ class CartController extends Controller
         $id = Auth::id();
 
         try{
-            $cartExists = Cart::where('id_user', $id);
+            $cartExists = Cart::where('id_user', $id)->exists();
 
             if($cartExists){
                 return response()->json(['message' => "Only one cart per account can be active at a time"], 409);

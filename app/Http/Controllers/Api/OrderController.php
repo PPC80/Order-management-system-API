@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\Api\CartController;
 use App\Models\OrderDetail;
 
@@ -26,6 +25,10 @@ class OrderController extends Controller
         $id = Auth::id();
 
         try{
+            /**
+             * Se trata de obtener los valores del id de cliente, el valor total del carrito y la direccion
+             * para crear con eso la orden
+             */
             $client = Client::where('id_user', $id)->first();
             $valor = Cart::where('id_user', $id)->first();
             $address = Address::where('id_cliente', $client->id)->first();
@@ -42,6 +45,7 @@ class OrderController extends Controller
                 'id_direccion' => $address->id
             ]);
 
+            //Se transpasan los details del carrito a los details de la orden
             $cartDetails = DB::table('cart_details')
                 ->where('id_cart', $valor->id)
                 ->get();
@@ -105,7 +109,6 @@ class OrderController extends Controller
                 JOIN clients cl ON os.id_cliente = cl.id
                 WHERE cl.id_user = :id
             ", ['id' => $id]);
-
 
             if (empty($results)) {
                 return response()->json(['message' => 'No orders available']);
