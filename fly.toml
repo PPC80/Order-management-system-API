@@ -3,7 +3,7 @@
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = "markerplacepppc"
+app = "marketplaceppc"
 primary_region = "bog"
 console_command = "php /var/www/html/artisan tinker"
 
