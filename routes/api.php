@@ -35,6 +35,9 @@ Route::get('products/search',[ProductsController::class,'search']);
 
 Route::middleware(['auth:sanctum'])->group(function ()
 {
+    //Accounts
+    Route::get('accounts',[AuthController::class,'indexAccounts']);
+
     //Logout
     Route::post('logout', [AuthController::class, 'logout']);
 

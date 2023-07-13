@@ -70,6 +70,43 @@ class AuthController extends Controller
     }
 
 
+
+    public function indexAccounts(){
+
+        $id = Auth::id();
+        $role = '';
+
+        try{
+            $user = User::where('id', $id)->first();
+
+            if($user->idRole == 0){
+                $role = 1;
+            } else if ($user->idRole == 1){
+                $role = 2;
+            } else {
+                return response()->json(['message' => 'Not authorized'], 401);
+            }
+
+            $results = DB::select("
+                SELECT id, email, created_at
+                FROM users
+                WHERE idRole = :idRole
+                ", ['idRole' => $role]);
+
+            if (empty($results)) {
+                return response()->json(['message' => 'No accounts available']);
+            }
+
+            return response()->json($results, 200);
+        } catch (\Exception $e){
+            Log::error("Error fetching accounts: " . $e->getMessage());
+            return response()->json(['error' => 'Failed to fetch accounts'], 500);
+        }
+    }
+
+
+
+
     public function register(Request $request){
 
         $validator = Validator::make($request->all(), [

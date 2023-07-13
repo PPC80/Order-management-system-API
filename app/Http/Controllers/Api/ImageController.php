@@ -20,7 +20,7 @@ class ImageController extends Controller
     public function store(Request $request){
 
         $request->validate([
-            'file' => 'required|image',
+            'file' => 'required|image|max:10240',
             'id_producto' => 'required|integer|numeric|gte:1'
         ]);
 
