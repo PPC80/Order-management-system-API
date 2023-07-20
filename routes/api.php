@@ -33,8 +33,8 @@ Route::post('register', [AuthController::class, 'register']);
 Route::get('products',[ProductsController::class,'index']);
 Route::get('products/search',[ProductsController::class,'search']);
 
-Route::middleware(['auth:sanctum'])->group(function ()
-{
+Route::middleware(['auth:sanctum'])->group(function (){
+    
     //Accounts
     Route::get('accounts',[AuthController::class,'indexAccounts']);
 
@@ -77,5 +77,6 @@ Route::middleware(['auth:sanctum'])->group(function ()
     //Images
     Route::get('image/show', [ImageController::class, 'show']);
     Route::post('image/upload', [ImageController::class, 'store']);
+    Route::post('image/upload/{product_id}', [ImageController::class, 'store']);
     Route::delete('image/delete', [ImageController::class, 'destroy']);
 });
