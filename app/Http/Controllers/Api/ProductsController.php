@@ -13,7 +13,7 @@ class ProductsController extends Controller
     public function index(){
 
         try{
-            $products = Product::all();
+            $products = Product::with('images')->get();
 
             if ($products->isEmpty()) {
                 return response()->json(['message' => 'No products available'], 404);
@@ -37,16 +37,23 @@ class ProductsController extends Controller
             'detalle' => 'string',
             'stock' => 'required|integer|numeric|gte:0',
             'valor' => 'required|decimal:2|numeric|gte:0',
+            'file' => 'image|max:10240'
         ]);
 
         try{
-            Product::create([
+            $product = Product::create([
                 'id_categoria' => $request->input('id_categoria'),
                 'nombre_producto' => $request->input('nombre'),
                 'detalle' => $request->input('detalle'),
                 'stock_number' => $request->input('stock'),
                 'valor_venta' => $request->input('valor')
             ]);
+
+            //Se llama al metodo para ingresar la imagen
+            if ($request->hasFile('file') && !is_null($product->id)) {
+                $imageController = app(ImageController::class);
+                $imageController->store($request, $product->id);
+            }
 
             return response()->json(['message' => "Product saved successfully"], 201);
 
