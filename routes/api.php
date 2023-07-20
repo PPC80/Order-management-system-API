@@ -33,8 +33,8 @@ Route::post('register', [AuthController::class, 'register']);
 Route::get('products',[ProductsController::class,'index']);
 Route::get('products/search',[ProductsController::class,'search']);
 
-Route::middleware(['auth:sanctum'])->group(function ()
-{
+Route::middleware(['auth:sanctum'])->group(function (){
+    
     //Accounts
     Route::get('accounts',[AuthController::class,'indexAccounts']);
 
