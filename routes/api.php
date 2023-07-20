@@ -77,5 +77,6 @@ Route::middleware(['auth:sanctum'])->group(function ()
     //Images
     Route::get('image/show', [ImageController::class, 'show']);
     Route::post('image/upload', [ImageController::class, 'store']);
+    Route::post('image/upload/{product_id}', [ImageController::class, 'store']);
     Route::delete('image/delete', [ImageController::class, 'destroy']);
 });

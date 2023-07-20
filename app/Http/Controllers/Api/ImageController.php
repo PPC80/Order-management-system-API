@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Image;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class ImageController extends Controller
@@ -17,28 +19,37 @@ class ImageController extends Controller
     }
 
 
-    public function store(Request $request){
+    public function store(Request $request, $product_id = null){
 
         $request->validate([
             'file' => 'required|image|max:10240',
-            'id_producto' => 'required|integer|numeric|gte:1'
         ]);
 
-        $uploadedFileUrl = Cloudinary::upload($request->file('file')->getRealPath())->getSecurePath();
-        $publicId = Cloudinary::getPublicId($uploadedFileUrl);
+        $rules = [
+            'product_id' => 'required|integer|numeric|gte:1'
+        ];
 
-        try{
-            Image::create([
-                'product_id' => $request->input('id_producto'),
-                'cloudinary_public_id' => $publicId,
-                'cloudinary_url' => $uploadedFileUrl
-            ]);
+        $validator = Validator::make(['product_id' => $product_id], $rules);
 
-            return response()->json(['message' => "Image saved successfully"], 201);
+        if ($validator->fails()){
+            return response()->json(['errors' => $validator->errors()], 422);
+        } else {
+            $uploadedFileUrl = Cloudinary::upload($request->file('file')->getRealPath())->getSecurePath();
+            $publicId = Cloudinary::getPublicId($uploadedFileUrl);
 
-        } catch (\Exception $e){
-            Log::error("Error saving image: " . $e->getMessage());
-            return response()->json(['error' => 'Failed to save image'], 500);
+            try{
+                Image::create([
+                    'product_id' => $product_id,
+                    'cloudinary_public_id' => $publicId,
+                    'cloudinary_url' => $uploadedFileUrl
+                ]);
+
+                return response()->json(['message' => "Image saved successfully"], 201);
+
+            } catch (\Exception $e){
+                Log::error("Error saving image: " . $e->getMessage());
+                return response()->json(['error' => 'Failed to save image'], 500);
+            }
         }
     }
 
