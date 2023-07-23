@@ -14,11 +14,11 @@ class CartDetailController extends Controller
 {
     public function index(Request $request){
 
-        try{
-            $request->validate([
-                'id' => 'required|integer|numeric|gte:1'
-            ]);
+        $request->validate([
+            'id' => 'required|integer|numeric|gte:1'
+        ]);
 
+        try{
             $id = $request->input('id');
 
             $results = DB::select("

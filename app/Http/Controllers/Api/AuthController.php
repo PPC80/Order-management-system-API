@@ -31,9 +31,8 @@ class AuthController extends Controller
 
             if (!$user->tokens->isEmpty()){
                 return response()->json([
-                    'message'=>'User is already authenticated.',
-                    'code'=> 403
-                ]);
+                    'message'=>'User is already authenticated.'
+                ], 403);
             } else {
                 if (Auth::attempt($credentials)) {
                     $user = Auth::user();
