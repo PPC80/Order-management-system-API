@@ -22,10 +22,11 @@ class CartDetailController extends Controller
             $id = $request->input('id');
 
             $results = DB::select("
-                SELECT cd.id_producto, pr.nombre_producto, pr.detalle, pr.valor_venta, cd.cantidad, cd.suma_precio
+                SELECT cd.id_producto, pr.nombre_producto, pr.detalle, pr.valor_venta, cd.cantidad, cd.suma_precio, im.cloudinary_url
                 FROM cart_details cd
                 JOIN products pr ON cd.id_producto = pr.id
                 JOIN carts ca ON ca.id = cd.id_cart
+                LEFT JOIN images im ON pr.id = im.product_id
                 WHERE ca.id = :id
             ", ['id' => $id]);
 
