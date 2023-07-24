@@ -218,7 +218,6 @@ class AuthController extends Controller
 
             $user = User::find($request->input('id_user'));
             $idRole = Auth::user()->idRole;
-            return response()->json(['message' => $idRole]);
 
             if($idRole == 0 || $idRole == 1){
                 if($user == null){
