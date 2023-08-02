@@ -29,25 +29,19 @@ class AuthController extends Controller
                 return response()->json(['error' => 'Invalid email or password'], 401);
             }
 
-            if (!$user->tokens->isEmpty()){
-                return response()->json([
-                    'message'=>'User is already authenticated.'
-                ], 403);
-            } else {
-                if (Auth::attempt($credentials)) {
-                    $user = Auth::user();
-                    $token = $user->createToken('Personal Access Token')->plainTextToken;
+            if (Auth::attempt($credentials)) {
+                $user = Auth::user();
+                $token = $user->createToken('Personal Access Token')->plainTextToken;
 
-                    return response()->json([
-                        'message' => 'Successfully logged in',
-                        'access_token' => $token,
-                        'token_type' => 'Bearer',
-                        'user_role' => $user->idRole,
-                        'user_id' => $user->id
-                    ]);
-                } else {
-                    return response()->json(['error' => 'Invalid email or password'], 401);
-                }
+                return response()->json([
+                    'message' => 'Successfully logged in',
+                    'access_token' => $token,
+                    'token_type' => 'Bearer',
+                    'user_role' => $user->idRole,
+                    'user_id' => $user->id
+                ]);
+            } else {
+                return response()->json(['error' => 'Invalid email or password'], 401);
             }
         } catch (\Exception $e){
             Log::error("Error loggging in: " . $e->getMessage());

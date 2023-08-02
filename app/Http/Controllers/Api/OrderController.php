@@ -198,6 +198,39 @@ class OrderController extends Controller
 
 
 
+    public function listDetails(Request $request){
+
+        $request->validate([
+            'id' => 'required|integer|numeric|gte:1'
+        ]);
+
+        try{
+            $id = $request->input('id');
+
+            $results = DB::select("
+                SELECT od.id_producto, pr.nombre_producto, pr.detalle, pr.valor_venta, od.cantidad, od.suma_precio, MAX(im.cloudinary_url) AS cloudinary_url
+                FROM order_Details od
+                JOIN products pr ON od.id_producto = pr.id
+                JOIN orders ord ON ord.id = od.id_pedido
+                LEFT JOIN images im ON pr.id = im.product_id
+                WHERE ord.id = :id
+                GROUP BY od.id_producto, pr.nombre_producto, pr.detalle, pr.valor_venta, od.cantidad, od.suma_precio
+            ", ['id' => $id]);
+
+            if (empty($results)) {
+                return response()->json(['message' => 'Order is empty']);
+            }
+
+            return response()->json($results, 200);
+
+        } catch (\Exception $e){
+            Log::error("Error loading order products: " . $e->getMessage());
+            return response()->json(['error' => 'Failed to load order products'], 500);
+        }
+    }
+
+
+
     public function destroy(Request $request){
 
         $request->validate([

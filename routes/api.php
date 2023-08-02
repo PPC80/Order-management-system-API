@@ -59,7 +59,7 @@ Route::middleware(['auth:sanctum'])->group(function ()
     //Cart Details
     Route::get('cart',[CartDetailController::class,'index']);
     Route::post('cart/add',[CartDetailController::class,'add']);
-    Route::get('cart/search',[CartDetailController::class,'search']);
+    //Route::get('cart/search',[CartDetailController::class,'search']);
     Route::delete('cart/remove',[CartDetailController::class,'remove']);
 
     //Profile
@@ -73,6 +73,7 @@ Route::middleware(['auth:sanctum'])->group(function ()
     Route::get('orders/client/list',[OrderController::class,'showClientOrders']);
     Route::get('orders/search',[OrderController::class,'search']);
     Route::put('orders/state/update',[OrderController::class,'updateState']);
+    Route::get('orders/details',[OrderController::class,'listDetails']);
 
     //Images
     Route::get('image/show', [ImageController::class, 'show']);
