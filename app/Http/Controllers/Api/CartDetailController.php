@@ -2,33 +2,34 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Cart;
 use App\Models\Product;
 use App\Models\CartDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Models\Cart;
+use Illuminate\Support\Facades\Auth;
 
 class CartDetailController extends Controller
 {
     public function index(Request $request){
 
-        $request->validate([
-            'id' => 'required|integer|numeric|gte:1'
-        ]);
+        $id = Auth::id();
+        $cart = Cart::where('id_user', $id)->first();
 
         try{
             $id = $request->input('id');
 
             $results = DB::select("
-                SELECT cd.id_producto, pr.nombre_producto, pr.detalle, pr.valor_venta, cd.cantidad, cd.suma_precio, im.cloudinary_url
+                SELECT cd.id_producto, pr.nombre_producto, pr.detalle, pr.valor_venta, cd.cantidad, cd.suma_precio, MAX(im.cloudinary_url) AS cloudinary_url
                 FROM cart_details cd
                 JOIN products pr ON cd.id_producto = pr.id
                 JOIN carts ca ON ca.id = cd.id_cart
                 LEFT JOIN images im ON pr.id = im.product_id
                 WHERE ca.id = :id
-            ", ['id' => $id]);
+                GROUP BY cd.id_producto, pr.nombre_producto, pr.detalle, pr.valor_venta, cd.cantidad, cd.suma_precio
+            ", ['id' => $cart->id]);
 
             if (empty($results)) {
                 return response()->json(['message' => 'Cart is empty']);
