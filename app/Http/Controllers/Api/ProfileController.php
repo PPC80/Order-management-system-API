@@ -22,7 +22,7 @@ class ProfileController extends Controller
                 FROM clients cl
                 LEFT JOIN addresses ad ON cl.id = ad.id_cliente
                 JOIN users us ON cl.id = us.id
-                WHERE cl.id = :id
+                WHERE cl.id_user = :id
             ", ['id' => $id]);
 
             if (empty($result)) {
