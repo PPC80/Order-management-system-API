@@ -62,4 +62,26 @@ class CartController extends Controller
             return response()->json(['error' => 'Failed to delete cart'], 500);
         }
     }
+
+
+    public function find(){
+
+        $id = Auth::id();
+
+        try{
+            $cart = DB::table('carts')
+                ->where('id_user', $id)
+                ->first();
+
+            if ($cart) {
+                return response()->json(['cart_id' => $cart->id], 200);
+            } else {
+                return response()->json(['message' => "User does not have an active cart"], 404);
+            }
+
+        } catch (\Exception $e){
+            Log::error("Error finding cart: " . $e->getMessage());
+            return response()->json(['error' => 'Failed to find cart'], 500);
+        }
+    }
 }
