@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Product;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 
 class ProductsController extends Controller
 {
@@ -31,7 +32,7 @@ class ProductsController extends Controller
 
     public function store(Request $request){
 
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'id_categoria' => 'required|integer|numeric|between:1,3',
             'nombre' => 'required|string',
             'detalle' => 'string',
@@ -39,6 +40,10 @@ class ProductsController extends Controller
             'valor' => 'required|decimal:2|numeric|gte:0',
             'file' => 'image|max:10240'
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
         try{
             $product = Product::create([
@@ -66,9 +71,13 @@ class ProductsController extends Controller
 
     public function show(Request $request){
 
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'id' => 'required|integer|numeric|gte:1'
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
         try{
             $product = DB::table('products')
@@ -90,9 +99,13 @@ class ProductsController extends Controller
 
     public function search(Request $request){
 
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'keyword' => 'required'
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
         $keyword = $request->input('keyword');
 
@@ -118,7 +131,7 @@ class ProductsController extends Controller
 
     public function update(Request $request){
 
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'id' => 'required|integer|numeric|gte:1',
             'id_categoria' => 'required|integer|numeric|between:1,3',
             'nombre_producto' => 'required|string',
@@ -126,6 +139,10 @@ class ProductsController extends Controller
             'stock_number' => 'required|integer|numeric|gte:0',
             'valor_venta' => 'required|decimal:2|numeric|gte:0',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
         try{
             $product = Product::find($request->input('id'));
@@ -153,9 +170,13 @@ class ProductsController extends Controller
 
     public function destroy(Request $request){
 
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'id' => 'required|integer|numeric|gte:1'
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
         try{
             $product = Product::find($request->input('id'));

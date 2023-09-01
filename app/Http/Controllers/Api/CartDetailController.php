@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class CartDetailController extends Controller
 {
@@ -47,11 +48,15 @@ class CartDetailController extends Controller
 
     public function add(Request $request){
 
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'id_cart' => 'required|integer|numeric|gte:1',
             'id_producto' => 'required|integer|numeric|gte:1',
             'cantidad' => 'required|integer|numeric|gte:1'
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
         try{
             $product = Product::find($request->input('id_producto'));
@@ -115,11 +120,15 @@ class CartDetailController extends Controller
 
     public function remove(Request $request){
 
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'id_cart' => 'required|integer|numeric|gte:1',
             'id_producto' => 'required|integer|numeric|gte:1',
             'cantidad' => 'required|integer|numeric|gte:1'
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
         try{
             $product = Product::find($request->input('id_producto'));

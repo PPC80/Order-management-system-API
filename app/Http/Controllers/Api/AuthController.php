@@ -16,10 +16,14 @@ class AuthController extends Controller
 {
     public function login(Request $request){
 
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
         try{
             $user = User::where('email', $request['email'])->first();
@@ -205,11 +209,15 @@ class AuthController extends Controller
 
     public function delete(Request $request){
 
-        try{
-            $request->validate([
-                'id_user' => 'required|integer|numeric|gte:1'
-            ]);
+        $validator = Validator::make($request->all(), [
+            'id_user' => 'required|integer|numeric|gte:1'
+        ]);
 
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        try{
             $user = User::find($request->input('id_user'));
             $idRole = Auth::user()->idRole;
 

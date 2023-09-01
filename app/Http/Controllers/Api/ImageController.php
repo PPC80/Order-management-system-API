@@ -57,9 +57,13 @@ class ImageController extends Controller
 
     public function show(Request $request){
 
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'id_producto' => 'required|integer|numeric|gte:1'
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
         $imagenes = DB::table('images')
                 ->where('product_id', $request->input('id_producto'))
@@ -72,9 +76,13 @@ class ImageController extends Controller
 
     public function destroy(Request $request){
 
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'cloudinary_id' => 'required|string'
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
         try{
             $imagen = Image::where('cloudinary_public_id', $request->input('cloudinary_id'))->first();
