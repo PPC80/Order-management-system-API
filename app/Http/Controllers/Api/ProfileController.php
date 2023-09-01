@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Client;
+use App\Models\Address;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Models\Address;
-use App\Models\Client;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class ProfileController extends Controller
 {
@@ -40,12 +41,16 @@ class ProfileController extends Controller
 
     public function update(Request $request){
 
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'nombres' => ['required', 'string', 'max:255', 'alpha:ascii'],
             'apellidos' => ['required', 'string', 'max:255', 'alpha:ascii'],
             'telefono' => ['string', 'regex:/^09\d{8}$/', 'size:10'],
             'direccion' => ['string', 'max:255']
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
         try{
             $id = Auth::id();

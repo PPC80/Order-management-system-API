@@ -6,21 +6,26 @@ use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Client;
 use App\Models\Address;
+use App\Models\OrderDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\CartController;
-use App\Models\OrderDetail;
 
 class OrderController extends Controller
 {
     public function create(Request $request){
 
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'modo_pago' => 'required|string|alpha:ascii|max:255'
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
         $id = Auth::id();
 
@@ -128,9 +133,13 @@ class OrderController extends Controller
      */
     public function search(Request $request){
 
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'keyword' => 'required'
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
         $keyword = $request->input('keyword');
 
@@ -171,10 +180,14 @@ class OrderController extends Controller
 
     public function updateState(Request $request){
 
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'id_pedido' => 'required|integer|numeric|gte:1',
             'estado' => 'required|string|alpha:ascii|max:255'
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
         $id = $request->input('id_pedido');
 
@@ -200,9 +213,13 @@ class OrderController extends Controller
 
     public function listDetails(Request $request){
 
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'id' => 'required|integer|numeric|gte:1'
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
         try{
             $id = $request->input('id');
@@ -233,9 +250,13 @@ class OrderController extends Controller
 
     public function destroy(Request $request){
 
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'id_user' => 'required|integer|numeric|gte:1'
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
         $id = $request->input('id_user');
 
