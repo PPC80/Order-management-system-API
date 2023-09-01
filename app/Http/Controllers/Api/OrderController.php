@@ -209,7 +209,7 @@ class OrderController extends Controller
 
             $results = DB::select("
                 SELECT od.id_producto, pr.nombre_producto, pr.detalle, pr.valor_venta, od.cantidad, od.suma_precio, MAX(im.cloudinary_url) AS cloudinary_url
-                FROM order_Details od
+                FROM order_details od
                 JOIN products pr ON od.id_producto = pr.id
                 JOIN orders ord ON ord.id = od.id_pedido
                 LEFT JOIN images im ON pr.id = im.product_id
