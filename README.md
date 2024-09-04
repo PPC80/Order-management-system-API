@@ -14,8 +14,8 @@ Asegurarse de tener instalados los siguientes componentes en el sistema:
 1. Clonar este repositorio en la máquina local:
 
    ```bash
-   git clone https://github.com/PPC80/tesis.git
-   cd tesis
+   git clone https://github.com/PPC80/Order-management-system-API.git
+   cd Order-management-system-API
 
 2. Instalar las dependencias utilizando Composer:
 
@@ -56,11 +56,6 @@ El proyecto estará disponible en http://localhost:8000/
 
 Abrir Thunder Client o Postman y navegar a cualquiera de las rutas del proyecto.
 Ingresar con las credenciales de usuario de prueba proporcionadas en los seeders.
-
-## Acceso a despliegue de producción
-
-También se puede acceder al backend a través de la URL: https://marketplaceppc.fly.dev sin tener que instalar el proyecto en local.
-
 
 ## Video Explicativo
 
